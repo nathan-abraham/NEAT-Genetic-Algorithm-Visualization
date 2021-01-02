@@ -43,14 +43,10 @@ class Cactus:
         # Gets the masks from the images
         man_mask = man.get_mask()
         cactus_mask = pygame.mask.from_surface(self.IMG)
-
         # Calculates an offset necessary for the collision
         offset = (self.x - man.x, self.y - round(man.y))
-
         # Detects if the masks overlaps
         collision = man_mask.overlap(cactus_mask, offset)
-
         if collision:
             return True
-
         return False
