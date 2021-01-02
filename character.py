@@ -1,23 +1,27 @@
 import pygame
 import os
 
-pygame.init()
+pygame.init()  # Initialize pygaem
 WIN_WIDTH = 1000
 WIN_HEIGHT = 720
-win = pygame.display.set_mode()
+win = pygame.display.set_mode()  # Set up display for converting images
 
-RUN_IMGS = [pygame.image.load(os.path.join("data", "dinorun000" + str(x) + ".png")).convert_alpha() for x in range(2)]
+# Load images
+RUN_IMGS = [pygame.image.load(os.path.join(
+    "data", "dinorun000" + str(x) + ".png")).convert_alpha() for x in range(2)]
 DINO_IMGS = [pygame.image.load(os.path.join("data", "dino0000.png")).convert_alpha(),
-            pygame.image.load(os.path.join("data", "dinoJump0000.png")).convert_alpha()]
-DUCK_IMGS = [pygame.image.load(os.path.join("data", "dinoduck000" + str(x) + ".png")).convert_alpha() for x in range(2)]
+             pygame.image.load(os.path.join("data", "dinoJump0000.png")).convert_alpha()]
+DUCK_IMGS = [pygame.image.load(os.path.join("data", "dinoduck000" +
+                                            str(x) + ".png")).convert_alpha() for x in range(2)]
+
 
 class Character:
-    IMG = DINO_IMGS[0]
-    isJump = False
-    JUMPCOUNT = 10
-    walkCount = 0
-    isSlide = False
-    slideCount = 0
+    IMG = DINO_IMGS[0] # Controls current image
+    isJump = False # Is the dino jumping or not
+    JUMPCOUNT = 10 # Used to simulate gravity
+    walkCount = 0 # Used to animate the dino
+    isSlide = False # Is the dino ducking or not
+    slideCount = 0 # Used to animate the sliding
 
     def __init__(self, x):
         self.x = x
@@ -33,16 +37,6 @@ class Character:
         if self.jumpCount < -self.JUMPCOUNT:
             self.isJump = False
             self.jumpCount = self.JUMPCOUNT
-
-        '''
-        if self.jumpCount >= -10:
-            self.y -= (self.jumpCount * abs(self.jumpCount)) * 0.5
-            self.jumpCount -= 1
-        else:
-            self.isJump = False
-            self.jumpCount = 10
-        '''
-
 
     def walk(self, win):
         if self.walkCount + 1 >= 6:
@@ -65,4 +59,5 @@ class Character:
             self.slideCount = 0
 
     def get_mask(self):
+        # Used for collision detection
         return pygame.mask.from_surface(self.IMG)
