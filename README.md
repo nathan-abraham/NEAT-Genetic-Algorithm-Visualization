@@ -4,4 +4,4 @@ Uses a feed-forward neural network with 4 inputs and two outputs to decide wheth
 
 # Dependencies Information
 Requirements: python 3.6 or higher, neat-python, pygame, numpy, graphviz, and matplotlib (the last three are only needed for visualizations)
-These requirements can be installed using "pip install -r requirements.txt" in the terminal or virtual environment
+These requirements can be installed using "pip install -r requirements.txt" (without quotation marks) in the terminal or virtual environment
