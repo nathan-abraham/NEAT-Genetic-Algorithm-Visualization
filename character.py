@@ -1,7 +1,7 @@
 import pygame
 import os
 
-pygame.init()  # Initialize pygaem
+pygame.init()  # Initialize pygame
 WIN_WIDTH = 1000
 WIN_HEIGHT = 720
 win = pygame.display.set_mode()  # Set up display for converting images
