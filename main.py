@@ -7,6 +7,7 @@ from cactus import Cactus
 from bird import Bird
 from bg import Bg
 from viz.visualize import draw_net
+from activation import control_activation, no_activation
 
 # Initializing pygame screen and font
 pygame.init()
@@ -21,8 +22,12 @@ BLACK = (0, 0, 0)  # Tuple containing black RGB values
 GEN = 0  # Keeps track of the number of generations
 show_lines = True  # Can set to false if you do not want the vision lines drawn
 
-STAT_FONT = pygame.font.SysFont("comicsans", 50)  # Font used to blit to screen
+# Activation Function Options
+current_activation = "tanh"
+activation_ranges = {"abs": 1.5, "clamped": 0.5, "gauss": 0.75, "identity": 1, "log": 0.25, "relu": 1.5, "sigmoid": 0.25, "sin": 0.5, "softplus": 1.5, "tanh": 0.5, "control": 0.5}
+activation_bound = activation_ranges[current_activation]
 
+STAT_FONT = pygame.font.SysFont("comicsans", 50)  # Font used to blit to screen
 
 def redraw_window(win, base, men, cacti, score, birds, gen, alive, cactus_ind, bird_ind):
     win.fill(WHITE)  # Fill the window with white every frame
@@ -66,7 +71,7 @@ def redraw_window(win, base, men, cacti, score, birds, gen, alive, cactus_ind, b
 def fitness_function(genomes, config):
     global GEN
     GEN += 1  # Increase generation with every call of the fitness_function
-    FPS = 30  # Increasing FPS also increases dino speed
+    FPS = 45  # Increasing FPS also increases dino speed
 
     run = True
     clock = pygame.time.Clock()  # Keeps track of framerate and main loop speed
@@ -141,13 +146,13 @@ def fitness_function(genomes, config):
                                        abs(man.y - birds[bird_ind].y)))
 
             if not man.isJump:
-                if output[0] > 0.5 and not man.isSlide:
+                if output[0] > activation_bound and not man.isSlide:
                     man.isJump = True
             else:
                 man.jump()
 
             if not man.isSlide:
-                if output[1] > 0.5:
+                if output[1] > activation_bound:
                     man.isSlide = True
 
         rem_cactus = []  # List of cacti to remove
@@ -195,14 +200,14 @@ def fitness_function(genomes, config):
             cactus_offset = randrange(1200, 1800)
             score += 1
             for g in ge:
-                g.fitness += 5  # increase fitness for passing a cactus
+                g.fitness += 2  # increase fitness for passing a cactus
             cacti.append(Cactus(cactus_offset, randrange(0, 3)))
 
         if add_bird:
             bird_offset = randrange(500, 800)
             score += 1
             for g in ge:
-                g.fitness += 5  # increase fitness for adding a bird
+                g.fitness += 2  # increase fitness for adding a bird
             if score <= 15:
                 birds.append(Bird(cacti[0].x + bird_offset, 1))
             else:
@@ -234,6 +239,8 @@ def run(config_path):
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)
+    config.genome_config.add_activation('control', control_activation) # Adding the control activation function
+    config.genome_config.add_activation('none', no_activation) # Adding the control activation function
 
     p = neat.Population(config)
 
@@ -241,7 +248,7 @@ def run(config_path):
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
 
-    winner = p.run(fitness_function, 50)
+    winner = p.run(fitness_function, 11)
 
 
 # Connects the config file to this python file using the os module
